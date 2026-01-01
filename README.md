@@ -25,12 +25,15 @@ A professional bulk file renaming tool with a modern dark-themed GUI, rule-based
 
 ### Quick Install (v1.1.0 - Production)
 
-Download the latest version for Windows:
+Download the latest version for Windows (Local Build):
 
 | Format | Download | Size |
 |--------|----------|------|
-| **Windows Installer (.exe)** | [Renamer 1.1.0 Setup](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.1.0/Renamer_1.0.0_x64-setup.exe) | 2.1 MB |
-| **Windows MSI** | [Renamer 1.1.0 MSI](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.1.0/Renamer_1.0.0_x64_en-US.msi) | 3.2 MB |
+| **Windows Installer (.exe)** | [Renamer 1.1.0 Setup (Local)](file:///c:/Karthik/Projects/Project-1/apps/desktop/src-tauri/target/release/bundle/nsis/Renamer_1.0.0_x64-setup.exe) | 2.1 MB |
+| **Windows MSI** | [Renamer 1.1.0 MSI (Local)](file:///c:/Karthik/Projects/Project-1/apps/desktop/src-tauri/target/release/bundle/msi/Renamer_1.0.0_x64_en-US.msi) | 3.2 MB |
+
+> [!IMPORTANT]
+> **To make these links public:** You need to manually create a `v1.1.0` Release on your GitHub and upload the files from the paths above as release assets.
 
 > **Note:** After downloading, run the installer and follow the prompts. Windows may show a SmartScreen warning - click "More info" → "Run anyway" to proceed.
 
