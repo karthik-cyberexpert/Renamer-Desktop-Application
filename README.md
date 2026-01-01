@@ -21,6 +21,29 @@ A professional bulk file renaming tool with a modern dark-themed GUI, rule-based
   - Case conversion (lowercase, uppercase, capitalize, title case)
   - Custom JavaScript expressions
 
+## 📥 Download
+
+### Quick Install (Recommended)
+
+Download the latest version for Windows:
+
+| Format | Download | Size |
+|--------|----------|------|
+| **Windows Installer (.exe)** | [Renamer_1.0.0_x64-setup.exe](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.0.0/Renamer_1.0.0_x64-setup.exe) | ~2.1 MB |
+| **Windows MSI** | [Renamer_1.0.0_x64_en-US.msi](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.0.0/Renamer_1.0.0_x64_en-US.msi) | ~3.2 MB |
+
+> **Note:** After downloading, run the installer and follow the prompts. Windows may show a SmartScreen warning - click "More info" → "Run anyway" to proceed.
+
+### All Releases
+
+View all releases and changelogs: [📦 Releases Page](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases)
+
+---
+
+## 🛠️ Build from Source
+
+If you prefer to build from source, follow the instructions below.
+
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:

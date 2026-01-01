@@ -1,5 +1,5 @@
 
-import { Rule, FileInfo, ProcessingContext } from '../types';
+import { Rule } from '../types';
 
 export const prefix = (name: string, rule: Rule): string => {
   return (rule.params.value || '') + name;

@@ -1,5 +1,5 @@
 
-export type RuleType = 'prefix' | 'suffix' | 'replace' | 'regex' | 'case' | 'sequence' | 'date' | 'metadata';
+export type RuleType = 'prefix' | 'suffix' | 'replace' | 'regex' | 'case' | 'sequence' | 'date' | 'metadata' | 'lowercase' | 'uppercase' | 'capitalize' | 'titlecase' | 'custom';
 
 export interface Rule {
   id: string;
