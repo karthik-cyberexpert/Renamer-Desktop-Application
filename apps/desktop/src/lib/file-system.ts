@@ -28,7 +28,35 @@ function getExtension(filename: string): string {
     return filename.substring(lastDot);
 }
 
-export async function scanFiles(dir: string, recursive: boolean = false): Promise<FileInfo[]> {
+/**
+ * Does a quick shallow scan of immediate entries to estimate size.
+ * Returns the count of direct files and number of subdirectories.
+ */
+export async function getFolderStats(dir: string): Promise<{ fileCount: number, dirCount: number }> {
+    try {
+        const entries = await readDir(dir);
+        let fileCount = 0;
+        let dirCount = 0;
+        for (const entry of entries) {
+            if (entry.isDirectory) {
+                if (!IGNORED_DIRS.has(entry.name)) dirCount++;
+            } else {
+                fileCount++;
+            }
+        }
+        return { fileCount, dirCount };
+    } catch (e) {
+        console.error("[getFolderStats] Error:", e);
+        return { fileCount: 0, dirCount: 0 };
+    }
+}
+
+export async function scanFiles(
+    dir: string, 
+    recursive: boolean = false, 
+    onProgress?: (count: number) => void,
+    _currentCount: { val: number } = { val: 0 }
+): Promise<FileInfo[]> {
     console.log('[scanFiles] Starting scan of:', dir, 'recursive:', recursive);
     try {
         const entries = await readDir(dir);
@@ -46,7 +74,7 @@ export async function scanFiles(dir: string, recursive: boolean = false): Promis
                 if (recursive) {
                     try {
                         const subDir = await join(dir, entry.name);
-                        const subFiles = await scanFiles(subDir, recursive);
+                        const subFiles = await scanFiles(subDir, recursive, onProgress, _currentCount);
                         files = files.concat(subFiles);
                     } catch (subErr) {
                         console.warn('[scanFiles] Could not scan subdirectory:', entry.name, subErr);
@@ -73,6 +101,9 @@ export async function scanFiles(dir: string, recursive: boolean = false): Promis
                         created: stats.birthtime || new Date(),
                         modified: stats.mtime || new Date()
                     });
+                    
+                    _currentCount.val++;
+                    if (onProgress) onProgress(_currentCount.val);
                 } catch (fileErr) {
                     console.warn('[scanFiles] Could not get stats for:', entry.name, fileErr);
                 }

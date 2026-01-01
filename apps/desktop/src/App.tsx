@@ -5,9 +5,11 @@ import { RuleBuilder } from './components/RuleBuilder';
 import { FileList } from './components/FileList';
 import { HelpModal } from './components/HelpModal';
 import { SettingsModal } from './components/SettingsModal';
+import { LargeFolderModal } from './components/LargeFolderModal';
+import { ScanningProgressModal } from './components/ScanningProgressModal';
 import { RenameConfirmationModal } from './components/RenameConfirmationModal';
 import { FileInfo, Rule, applyRules } from '@renamer/core';
-import { scanFiles, performRename } from './lib/file-system';
+import { scanFiles, performRename, getFolderStats } from './lib/file-system';
 import { defaultRules } from './lib/defaultRules';
 
 export default function App() {
@@ -28,15 +30,27 @@ export default function App() {
   
   // Settings
   const [appSettings, setAppSettings] = useState({
-    recursiveScan: false,
+    recursiveScan: true, // Default to true as requested
     showHiddenFiles: false,
-    confirmBeforeApply: true // Default to true for safety
+    confirmBeforeApply: true
   });
 
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     count: 0,
     files: [] as FileInfo[]
+  });
+
+  const [largeFolderModal, setLargeFolderModal] = useState({
+    isOpen: false,
+    path: '',
+    name: ''
+  });
+
+  const [scanProgress, setScanProgress] = useState({
+    isScanning: false,
+    count: 0,
+    folder: ''
   });
 
   // Keyboard shortcuts
@@ -53,13 +67,53 @@ export default function App() {
 
   const handleFilesSelected = async (path: string | null) => {
       if (!path) return;
+      
+      const folderName = path.split(/[/\\]/).pop() || path;
+
+      // If recursive is off, scan immediately
+      if (!appSettings.recursiveScan) {
+          await startScan(path, false);
+          return;
+      }
+
+      // Check if it's a "Large" folder (shallow check of immediate dir items)
+      const stats = await getFolderStats(path);
+      
+      // Threshold: if there's more than 20 directories, warn the user
+      if (stats.dirCount > 20) {
+          setLargeFolderModal({ isOpen: true, path, name: folderName });
+          return;
+      }
+
+      await startScan(path, true);
+  };
+
+  const startScan = async (path: string, recursive: boolean) => {
+      const folderName = path.split(/[/\\]/).pop() || path;
       setLoading(true);
-      const scanned = await scanFiles(path, appSettings.recursiveScan);
-      setFiles(scanned);
-      setSelectedFiles(new Set());
-      setLoading(false);
-      // On mobile, close menu after selecting
-      setMobileMenuOpen(false);
+      
+      // If it's a deep scan, show progress after 500ms if not done
+      let progressTimer: any = null;
+      if (recursive) {
+          progressTimer = setTimeout(() => {
+              setScanProgress({ isScanning: true, count: 0, folder: folderName });
+          }, 500);
+      }
+
+      try {
+          const scanned = await scanFiles(path, recursive, (count) => {
+              if (recursive) setScanProgress(p => ({ ...p, count }));
+          });
+          setFiles(scanned);
+          setSelectedFiles(new Set());
+      } catch (e) {
+          console.error("Scan failed", e);
+      } finally {
+          clearTimeout(progressTimer);
+          setScanProgress({ isScanning: false, count: 0, folder: '' });
+          setLoading(false);
+          setMobileMenuOpen(false);
+      }
   };
 
   const toggleFileSelection = (filePath: string) => {
@@ -429,6 +483,17 @@ export default function App() {
           count={confirmModal.count}
           onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
           onConfirm={() => executeRename(confirmModal.files)}
+        />
+        <LargeFolderModal 
+          isOpen={largeFolderModal.isOpen}
+          folderName={largeFolderModal.name}
+          onClose={() => setLargeFolderModal({ ...largeFolderModal, isOpen: false })}
+          onContinue={(recursive) => startScan(largeFolderModal.path, recursive)}
+        />
+        <ScanningProgressModal 
+          isOpen={scanProgress.isScanning}
+          folderName={scanProgress.folder}
+          fileCount={scanProgress.count}
         />
     </div>
   );

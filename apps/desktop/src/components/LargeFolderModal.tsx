@@ -1,5 +1,5 @@
 
-import { FolderSearch, X, Zap, ArrowRight, SkipForward } from 'lucide-react';
+import { FolderSearch, Zap, ArrowRight, SkipForward } from 'lucide-react';
 
 interface LargeFolderModalProps {
     isOpen: boolean;
