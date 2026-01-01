@@ -1,0 +1,19 @@
+{
+  "name": "@renamer/cli",
+  "version": "0.1.0",
+  "bin": {
+    "renamer": "./bin/renamer.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@renamer/core": "*",
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.0"
+  }
+}

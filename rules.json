@@ -1,0 +1,4 @@
+[
+  { "id": "1", "type": "prefix", "active": true, "params": { "value": "TEST_" } },
+  { "id": "2", "type": "sequence", "active": true, "params": { "start": 1, "padding": 3, "mode": "append" } }
+]
