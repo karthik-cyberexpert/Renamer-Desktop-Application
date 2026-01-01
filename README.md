@@ -1,177 +1,190 @@
-# Rule-Based File Renamer
+# 🔄 Renamer Desktop Application
 
-A professional bulk file renaming tool with a shared rule engine, CLI, and Desktop GUI.
+A professional bulk file renaming tool with a modern dark-themed GUI, rule-based engine, and powerful customization options.
+
+![Tauri](https://img.shields.io/badge/Tauri-2.0-blue?logo=tauri)
+![React](https://img.shields.io/badge/React-18-61dafb?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+## ✨ Features
+
+- 🎨 **Modern Dark UI** - Beautiful glassmorphism design with purple/cyan accent colors
+- 📁 **Folder Selection** - Open any folder and view all files
+- 🔀 **Live Preview** - See renamed files in real-time before applying
+- ✅ **Selective Renaming** - Enable selection mode to rename only specific files
+- 📝 **Multiple Rule Types**:
+  - Prefix / Suffix
+  - Find & Replace
+  - Sequence numbering
+  - Date/Time stamps
+  - Case conversion (lowercase, uppercase, capitalize, title case)
+  - Custom JavaScript expressions
 
 ## 📋 Prerequisites
 
-### For CLI (Command Line Interface)
-- ✅ Node.js v18 or higher
+Before you begin, ensure you have the following installed:
 
-### For GUI (Desktop App)
-- ✅ Node.js v18 or higher
-- ✅ Rust toolchain - **[Install from rustup.rs](https://rustup.rs/)**
-  - After installing, restart your terminal
+| Requirement | Version | Download |
+|-------------|---------|----------|
+| Node.js | v18 or higher | [nodejs.org](https://nodejs.org/) |
+| Rust | Latest stable | [rustup.rs](https://rustup.rs/) |
+| Git | Any | [git-scm.com](https://git-scm.com/) |
 
----
+> **Note:** After installing Rust, restart your terminal for the changes to take effect.
 
-## 🚀 Quick Start
+## 🚀 Installation
 
-### Step 1: Install Dependencies
+### 1. Clone the Repository
 
-From the root directory (`c:\Karthik\Projects\Project-1`):
+```bash
+git clone https://github.com/karthik-cyberexpert/Renamer-Desktop-Application.git
+cd Renamer-Desktop-Application
+```
+
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Step 2: Build the Project
+### 3. Build the Core Package
 
 ```bash
 npm run build --workspaces
 ```
 
----
-
-## 💻 Using the CLI
-
-### Basic Commands
-
-**Show help:**
-```bash
-node packages/cli/bin/renamer.js --help
-```
-
-**Rename files (dry-run by default):**
-```bash
-node packages/cli/bin/renamer.js run --rules rules.json --target ./my-files
-```
-
-**Actually rename files:**
-```bash
-node packages/cli/bin/renamer.js run --rules rules.json --target ./my-files --no-dry-run
-```
-
-**Undo a rename operation:**
-```bash
-node packages/cli/bin/renamer.js undo --log renamer-log-<timestamp>.json
-```
-
-### Step-by-Step CLI Usage
-
-1. **Create a rules file** (`rules.json`):
-   ```json
-   [
-     {
-       "id": "1",
-       "type": "prefix",
-       "active": true,
-       "params": { "value": "IMG_" }
-     },
-     {
-       "id": "2",
-       "type": "sequence",
-       "active": true,
-       "params": { "start": 1, "padding": 3 }
-     }
-   ]
-   ```
-
-2. **Test with dry-run** (safe preview):
-   ```bash
-   node packages/cli/bin/renamer.js run --rules rules.json --target ./test-files
-   ```
-
-3. **Review the output**, then **apply changes**:
-   ```bash
-   node packages/cli/bin/renamer.js run --rules rules.json --target ./test-files --no-dry-run
-   ```
-
-4. **If needed, undo**:
-   ```bash
-   node packages/cli/bin/renamer.js undo --log renamer-log-<timestamp>.json
-   ```
-
----
-
-## 🖥️ Using the GUI
-
-### Prerequisites Check
-
-Before running the GUI, verify Rust is installed:
+### 4. Run the Application
 
 ```bash
-cargo --version
+cd apps/desktop
+npm run tauri dev
 ```
 
-If you see an error, install Rust from **[rustup.rs](https://rustup.rs/)** and restart your terminal.
+The app will compile and launch automatically. First-time compilation may take a few minutes.
 
-### Step-by-Step GUI Usage
+## 🖥️ Usage
 
-1. **Start the development server** (from root directory):
-   ```bash
-   npm run dev
-   ```
+### Basic Workflow
 
-2. **The Tauri app will launch** with a 3-pane interface:
-   - **Left Pane:** File selection (click "Open Folder")
-   - **Center Pane:** Preview table showing original → new names
-   - **Right Pane:** Rule builder
+1. **Open a Folder** - Click the "Open Folder" button in the left panel
+2. **Add Rules** - Click "+ Add Rule" in the right panel and select a rule type
+3. **Configure Rules** - Fill in the parameters for each rule
+4. **Preview Changes** - See the live preview in the center panel
+5. **Apply Changes** - Click "Apply Changes" to rename the files
 
-3. **Add rules** by clicking "+ Add Rule" and selecting a type (prefix, suffix, sequence, etc.)
+### Selection Mode
 
-4. **Configure each rule** with the parameters in the form fields
+For selective renaming:
+1. Click the **"Selection"** toggle button
+2. Use checkboxes to select specific files
+3. Use "Select All" / "Deselect All" for quick actions
+4. Only selected files will be renamed when you click "Apply Changes"
 
-5. **Review the preview** in the center pane (updates live)
+### Available Rules
 
-6. **Click "Apply"** to rename the files
+| Rule | Description | Example |
+|------|-------------|---------|
+| **Prefix** | Add text at the start | `photo.jpg` → `IMG_photo.jpg` |
+| **Suffix** | Add text before extension | `photo.jpg` → `photo_2024.jpg` |
+| **Replace** | Find and replace text | `photo_old.jpg` → `photo_new.jpg` |
+| **Sequence** | Add sequential numbers | `photo.jpg` → `001_photo.jpg` |
+| **Date** | Insert date/time | `photo.jpg` → `2024-01-01_photo.jpg` |
+| **Lowercase** | Convert to lowercase | `PHOTO.jpg` → `photo.jpg` |
+| **Uppercase** | Convert to UPPERCASE | `photo.jpg` → `PHOTO.jpg` |
+| **Capitalize** | Capitalize Each Word | `hello world.jpg` → `Hello World.jpg` |
+| **Title Case** | Smart title case | `HELLO WORLD.jpg` → `Hello World.jpg` |
+| **Custom** | JavaScript expression | Use `name` variable for custom transforms |
 
----
+### Custom Rule Examples
 
-## 📚 Available Rules
+```javascript
+// Replace underscores with spaces
+name.replace(/_/g, ' ')
 
-- **prefix** - Add text to the beginning
-- **suffix** - Add text to the end (before extension)
-- **replace** - Find and replace text
-- **sequence** - Add sequential numbers
-- **date** - Insert date/time stamps
-- **regex** - Advanced pattern matching
+// Reverse the filename
+name.split('').reverse().join('')
 
----
+// Truncate to 10 characters
+name.substring(0, 10)
 
-## 🛠️ Troubleshooting
-
-### "cargo: command not found" or "program not found"
-- **Solution:** Install Rust from [rustup.rs](https://rustup.rs/)
-- After installation, restart your terminal
-- Verify with: `cargo --version`
-
-### "Cannot find module" error
-- **Solution:** Make sure you're in the root directory (`c:\Karthik\Projects\Project-1`)
-- Run `npm install` again
-
-### GUI build fails
-- Ensure Rust is installed
-- Try: `cd apps/desktop` then `npm install`
-
----
+// Remove numbers
+name.replace(/\d/g, '')
+```
 
 ## 📁 Project Structure
 
 ```
-Project-1/
+Renamer-Desktop-Application/
 ├── packages/
-│   ├── core/          # Shared rule engine (TypeScript)
-│   └── cli/           # Command-line interface
-└── apps/
-    └── desktop/       # Tauri + React GUI
+│   ├── core/              # Shared rule engine (TypeScript)
+│   └── cli/               # Command-line interface
+├── apps/
+│   └── desktop/           # Tauri + React desktop app
+│       ├── src/           # React frontend
+│       └── src-tauri/     # Rust backend
+├── package.json           # Root workspace config
+└── README.md
 ```
+
+## �️ Development
+
+### Running in Development Mode
+
+```bash
+cd apps/desktop
+npm run tauri dev
+```
+
+### Building for Production
+
+```bash
+cd apps/desktop
+npm run tauri build
+```
+
+The built application will be in `apps/desktop/src-tauri/target/release/`.
+
+## � Troubleshooting
+
+### "cargo: command not found"
+Install Rust from [rustup.rs](https://rustup.rs/) and restart your terminal.
+
+### "Cannot find module" error
+Run `npm install` from the root directory.
+
+### Build fails on first run
+This is normal - the first build downloads and compiles Rust dependencies. Wait for it to complete.
+
+### Files not appearing after selecting folder
+Make sure you're selecting a folder with files (not just subfolders). The app scans only the selected directory, not subdirectories by default.
+
+## � CLI Usage (Optional)
+
+The project also includes a CLI for batch processing:
+
+```bash
+# Show help
+node packages/cli/bin/renamer.js --help
+
+# Dry run (preview changes)
+node packages/cli/bin/renamer.js run --rules rules.json --target ./my-files
+
+# Apply changes
+node packages/cli/bin/renamer.js run --rules rules.json --target ./my-files --no-dry-run
+
+# Undo changes
+node packages/cli/bin/renamer.js undo --log renamer-log-<timestamp>.json
+```
+
+## � Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ---
 
-## 🧪 Running Tests
-
-```bash
-npm run test --workspaces
-```
-
-This runs unit tests for the core rule engine.
+**Made with ❤️ using Tauri, React, and TypeScript**
