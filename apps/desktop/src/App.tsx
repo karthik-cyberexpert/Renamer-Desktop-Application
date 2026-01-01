@@ -1,9 +1,11 @@
-
-import { useState } from 'react';
-import { Play, Sparkles, CheckSquare, Square, PanelLeftClose, PanelRightClose, Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, Sparkles, CheckSquare, Square, PanelLeftClose, PanelRightClose, Menu, X, HelpCircle, Settings } from 'lucide-react';
 import { FileSelector } from './components/FileSelector';
 import { RuleBuilder } from './components/RuleBuilder';
 import { FileList } from './components/FileList';
+import { HelpModal } from './components/HelpModal';
+import { SettingsModal } from './components/SettingsModal';
+import { RenameConfirmationModal } from './components/RenameConfirmationModal';
 import { FileInfo, Rule, applyRules } from '@renamer/core';
 import { scanFiles, performRename } from './lib/file-system';
 import { defaultRules } from './lib/defaultRules';
@@ -19,11 +21,40 @@ export default function App() {
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Modal states
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  
+  // Settings
+  const [appSettings, setAppSettings] = useState({
+    recursiveScan: false,
+    showHiddenFiles: false,
+    confirmBeforeApply: true // Default to true for safety
+  });
+
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    count: 0,
+    files: [] as FileInfo[]
+  });
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        setHelpOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleFilesSelected = async (path: string | null) => {
       if (!path) return;
       setLoading(true);
-      const scanned = await scanFiles(path, false);
+      const scanned = await scanFiles(path, appSettings.recursiveScan);
       setFiles(scanned);
       setSelectedFiles(new Set());
       setLoading(false);
@@ -50,11 +81,37 @@ export default function App() {
   };
   
   const handleApply = async () => {
-      setLoading(true);
-      const filesToRename = selectionMode && selectedFiles.size > 0
+      const initialFilesToRename = selectionMode && selectedFiles.size > 0
           ? files.filter(f => selectedFiles.has(f.path))
           : files;
-      
+
+      if (initialFilesToRename.length === 0) return;
+
+      // Filter to find files that ACTUALLY change
+      const filesToActuallyRename = initialFilesToRename.filter((file, i) => {
+          const result = applyRules(file, rules, { index: i, total: initialFilesToRename.length, files: initialFilesToRename });
+          return result.newName !== file.originalName;
+      });
+
+      if (filesToActuallyRename.length === 0) {
+          // No files need renaming
+          return;
+      }
+
+      if (appSettings.confirmBeforeApply) {
+          setConfirmModal({
+              isOpen: true,
+              count: filesToActuallyRename.length,
+              files: filesToActuallyRename
+          });
+          return;
+      }
+
+      executeRename(filesToActuallyRename);
+  };
+
+  const executeRename = async (filesToRename: FileInfo[]) => {
+      setLoading(true);
       const context = { index: 0, total: filesToRename.length, files: filesToRename };
       
       for (const file of filesToRename) {
@@ -135,11 +192,53 @@ export default function App() {
            height: 'calc(100% - 56px)'
          }}
        >
-          <div className="lg:hidden h-full" style={{ paddingTop: '0' }}>
-            <FileSelector onFilesSelected={handleFilesSelected} />
+          <div className="lg:hidden h-full flex flex-col" style={{ paddingTop: '0' }}>
+            <div className="flex-1">
+              <FileSelector onFilesSelected={handleFilesSelected} />
+            </div>
+            {/* Mobile Help/Settings Footer */}
+            <div className="p-3 flex gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <button 
+                onClick={() => setHelpOpen(true)}
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium"
+                style={{ background: '#1e1e26', color: '#a1a1aa' }}
+              >
+                <HelpCircle size={14} /> Help
+              </button>
+              <button 
+                onClick={() => setSettingsOpen(true)}
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium"
+                style={{ background: '#1e1e26', color: '#a1a1aa' }}
+              >
+                <Settings size={14} /> Settings
+              </button>
+            </div>
           </div>
           <div className="hidden lg:flex lg:flex-col lg:h-full">
-            <FileSelector onFilesSelected={handleFilesSelected} />
+            <div className="flex-1">
+              <FileSelector onFilesSelected={handleFilesSelected} />
+            </div>
+            {/* Desktop Help/Settings Footer */}
+            <div className="p-3 flex gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <button 
+                onClick={() => setHelpOpen(true)}
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium transition-colors"
+                style={{ background: '#1e1e26', color: '#a1a1aa' }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#262630'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#1e1e26'}
+              >
+                <HelpCircle size={14} /> Help
+              </button>
+              <button 
+                onClick={() => setSettingsOpen(true)}
+                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium transition-colors"
+                style={{ background: '#1e1e26', color: '#a1a1aa' }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#262630'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#1e1e26'}
+              >
+                <Settings size={14} /> Settings
+              </button>
+            </div>
           </div>
        </div>
        
@@ -317,6 +416,20 @@ export default function App() {
            onClick={() => setRightPanelOpen(false)}
          />
        )}
+        {/* Modals */}
+        <HelpModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
+        <SettingsModal 
+          isOpen={settingsOpen} 
+          onClose={() => setSettingsOpen(false)}
+          settings={appSettings}
+          onSettingsChange={setAppSettings}
+        />
+        <RenameConfirmationModal 
+          isOpen={confirmModal.isOpen}
+          count={confirmModal.count}
+          onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+          onConfirm={() => executeRename(confirmModal.files)}
+        />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 
-import { Rule } from '../types';
+import { Rule } from '../types.js';
 
 export const prefix = (name: string, rule: Rule): string => {
   return (rule.params.value || '') + name;
