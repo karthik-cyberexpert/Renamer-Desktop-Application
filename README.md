@@ -23,14 +23,16 @@ A professional bulk file renaming tool with a modern dark-themed GUI, rule-based
 
 ## 📥 Download
 
-### Quick Install (Recommended)
+### Quick Install (v1.1.0 - Latest)
+
+**What's new:** Help System, Settings, Precise Rename Count, and Deep/Recursive Scan with Progress.
 
 Download the latest version for Windows:
 
-| Format | Download | Size |
-|--------|----------|------|
-| **Windows Installer (.exe)** | [Renamer_1.0.0_x64-setup.exe](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.0.0/Renamer_1.0.0_x64-setup.exe) | ~2.1 MB |
-| **Windows MSI** | [Renamer_1.0.0_x64_en-US.msi](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.0.0/Renamer_1.0.0_x64_en-US.msi) | ~3.2 MB |
+| Format | Download | Local Link (Dev/Testing) |
+|--------|----------|-------------------------|
+| **Windows Installer (.exe)** | [Renamer 1.1.0 Setup](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.1.0/Renamer_1.0.0_x64-setup.exe) | [Local Setup](file:///c:/Karthik/Projects/Project-1/apps/desktop/src-tauri/target/release/bundle/nsis/Renamer_1.0.0_x64-setup.exe) |
+| **Windows MSI** | [Renamer 1.1.0 MSI](https://github.com/karthik-cyberexpert/Renamer-Desktop-Application/releases/download/v1.1.0/Renamer_1.0.0_x64_en-US.msi) | [Local MSI](file:///c:/Karthik/Projects/Project-1/apps/desktop/src-tauri/target/release/bundle/msi/Renamer_1.0.0_x64_en-US.msi) |
 
 > **Note:** After downloading, run the installer and follow the prompts. Windows may show a SmartScreen warning - click "More info" → "Run anyway" to proceed.
 
